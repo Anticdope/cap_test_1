@@ -20,14 +20,14 @@ void setup() {
   
   // Calibrate baseline
   long total = 0;
-  for (int i = 0; i < 20; i++) {
+  for (int i = 0; i < 50; i++) {
     total += analogRead(TOUCH_PIN);
     delay(10);
   }
-  baseline = total / 20;
+  baseline = total / 50;
   
   Serial.println("Calibration complete!");
-  Serial.println("Baseline: " + String(baseline));
+  Serial.println("Baseline: " + String(baseline)); // 
 }
 
 void loop() {
