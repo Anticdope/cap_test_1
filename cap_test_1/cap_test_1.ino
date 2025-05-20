@@ -58,7 +58,7 @@ void loop() {
   int value = analogRead(TOUCH_PIN);
   int difference = abs(value - baseline);
   
-  if (difference > threshold && !touched) {
+  if (difference > threshold && value > baseline && !touched) {
     Serial.println("TOUCHED! Value: " + String(value) + ", Diff: " + String(difference));
     touched = true;
     digitalWriteFast(ledPin, LOW);
