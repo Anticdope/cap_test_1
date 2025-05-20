@@ -18,7 +18,7 @@ const uint16_t TOTAL_DMX_CH    = NUM_RGB_FIX * CH_PER_RGB + CH_LAST_FIX;
 
 // Variables
 int baseline = 0;     // Baseline reading
-int threshold = 80;   // Detection threshold
+int threshold = 60;   // Detection threshold
 bool touched = false;
 
 void setup() {
