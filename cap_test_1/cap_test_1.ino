@@ -4,11 +4,12 @@
 void setup() {
   pinMode(output_pin, OUTPUT);
   pinMode(input_pin, INPUT_PULLDOWN);
+  digitalWrite(output_pin, HIGH);
   Serial.begin(9600);
 }
 
 void loop() {
-  if(digitalRead(input_pin)){
+  if(digitalRead(input_pin) == HIGH){
     Serial.println("Touched!");
     delay(1000);
   }
