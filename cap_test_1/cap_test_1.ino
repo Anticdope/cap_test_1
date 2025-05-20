@@ -18,7 +18,7 @@ const uint16_t TOTAL_DMX_CH    = NUM_RGB_FIX * CH_PER_RGB + CH_LAST_FIX;
 
 // Variables
 int baseline = 0;     // Baseline reading
-int threshold = 50;   // Detection threshold
+int threshold = 80;   // Detection threshold
 bool touched = false;
 
 void setup() {
@@ -37,18 +37,17 @@ void setup() {
   
   // Calibrate baseline
   long total = 0;
-  for (int i = 0; i < 50; i++) {
+  for (int i = 0; i < 100; i++) {
     total += analogRead(TOUCH_PIN);
     delay(10);
   }
-  baseline = total / 50;
+  baseline = total / 100;
   
   Serial.println("Calibration complete!");
   Serial.println("Baseline: " + String(baseline));
 }
 
 static void setRGB(uint8_t fixtureIndex, uint8_t val) {
-  // Sets R, G, B = val for fixtureIndex [0..5]
   uint16_t base = fixtureIndex * CH_PER_RGB + 1;
   dmxTx.set(base    , val);
   dmxTx.set(base + 1, val);
@@ -56,48 +55,34 @@ static void setRGB(uint8_t fixtureIndex, uint8_t val) {
 }
 
 void loop() {
-  // Read the analog pin
   int value = analogRead(TOUCH_PIN);
   int difference = abs(value - baseline);
   
-  // Check if touched (value changes significantly from baseline)
   if (difference > threshold && !touched) {
     Serial.println("TOUCHED! Value: " + String(value) + ", Diff: " + String(difference));
     touched = true;
-    digitalWriteFast(ledPin, LOW); // CORRECTED: Consistent use of digitalWriteFast
-    
-    // 1) Fixtures 1 & 6 → full white
+    digitalWriteFast(ledPin, LOW);
+
     setRGB(0, 255);
-    setRGB(5, 255);  // CORRECTED: Index 5 is the 6th fixture (0-based indexing)
+    setRGB(5, 255);
 
     delay(500);
 
-    // 2) Fixtures 2 & 5 → full white
     setRGB(1, 255);
     setRGB(4, 255);
 
     delay(250);
 
-    // 3) Fixtures 3 & 4 → full white
     setRGB(2, 255);
     setRGB(3, 255);  // CORRECTED: 4th fixture is index 3
-
-    // 4) Fade last fixture upwards over 1 second
-    uint16_t lastCh = NUM_RGB_FIX * CH_PER_RGB + 1;
-    for (uint16_t v = 0; v <= 255; v++) {
-      dmxTx.set(lastCh, v);
-      delay(4); // CORRECTED: 4ms is closer to 1s/255 than 1000/255
-    }
     
-    // ISSUE: This line uses channel 20 directly instead of calculated lastCh value
-    // dmxTx.set(20, 255);  // Should be using lastCh instead of hard-coded 20
-    dmxTx.set(lastCh, 255); // CORRECTED: Use calculated channel
+    delay(2000);
+
+    dmxTx.set(20, 255);
 
     delay(7000);
-    
-    // ISSUE: Similarly, should use lastCh
-    // dmxTx.set(20, 0);
-    dmxTx.set(lastCh, 0); // CORRECTED: Use calculated channel
+
+    dmxTx.set(20, 0);
     
     allOff();
     digitalWriteFast(ledPin, HIGH);
