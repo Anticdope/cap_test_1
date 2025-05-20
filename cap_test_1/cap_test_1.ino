@@ -50,5 +50,5 @@ void loop() {
   // Optional debugging output
   // Serial.println("Value: " + String(value) + ", Diff: " + String(difference));
   
-  delay(50);
+  delay(500);
 }
